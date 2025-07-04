@@ -1,0 +1,26 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/fail2ban
+
+# Общие настройки Fail2ban
+fail2ban_bantime: 3600
+fail2ban_findtime: 600
+fail2ban_maxretry: 5
+fail2ban_banaction: iptables-multiport
+fail2ban_destemail: "your_email@example.com"
+fail2ban_sendername: "Fail2Ban VPS Alert"
+fail2ban_mta: "sendmail"
+
+fail2ban_ignore_ips:
+  - "127.0.0.1/8"
+  - "::1"
+
+fail2ban_ssh_enabled: true
+fail2ban_ssh_port: "ssh"
+fail2ban_ssh_action: "%(action_mwl)s"
+
+fail2ban_recidive_enabled: true
+fail2ban_recidive_bantime: "1w" # 1 неделя
+fail2ban_recidive_findtime: "1d" # 1 день
+fail2ban_recidive_maxretry: 3
+fail2ban_recidive_action: "%(action_mwl)s"

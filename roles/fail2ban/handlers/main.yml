@@ -1,0 +1,9 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for roles/fail2ban
+
+- name: restart fail2ban
+  become: true
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted

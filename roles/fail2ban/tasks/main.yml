@@ -1,0 +1,52 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/fail2ban
+#
+- name: Ensure fail2ban is installed
+  become: true
+  ansible.builtin.package:
+    name: fail2ban
+    state: present
+
+- name: Copy jail.local configuration
+  become: true
+  ansible.builtin.template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart fail2ban
+
+- name: Ensure fail2ban service is running and enabled
+  become: true
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true
+
+- name: Ensure postfix is installed for mail notifications (Debian/Ubuntu)
+  when:
+    - ansible_os_family == 'Debian'
+    - fail2ban_destemail != "your_email@example.com"
+  become: true
+  ansible.builtin.package:
+    name: postfix
+    state: present
+
+- name: Ensure postfix is installed for mail notifications (RHEL/CentOS)
+  when:
+    - ansible_os_family == 'RedHat'
+    - fail2ban_destemail != "your_email@example.com" # Убедитесь, что email был изменен
+  become: true
+  ansible.builtin.package:
+    name: postfix
+    state: present
+
+- name: Ensure postfix service is running and enabled (if installed)
+  when: fail2ban_destemail != "your_email@example.com"
+  become: true
+  ansible.builtin.service:
+    name: postfix
+    state: started
+    enabled: true
