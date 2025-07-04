@@ -1,0 +1,10 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for roles/firewall
+
+- name: restart firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: restarted
+    enabled: true
+  listen: "firewalld_changed"

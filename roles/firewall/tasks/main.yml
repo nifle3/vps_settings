@@ -1,0 +1,80 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/firewall
+
+- name: Ensure firewalld is installed
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+
+- name: Ensure firewalld service is {{ firewall_state }} and running
+  ansible.builtin.service:
+    name: firewalld
+    state: "{{ 'started' if firewall_state == 'enabled' else 'stopped' }}"
+    enabled: "{{ firewall_state == 'enabled' }}"
+  notify: "firewalld_changed"
+
+- name: Set default zone for firewalld
+  ansible.posix.firewalld:
+    zone: "{{ firewall_default_zone }}"
+    state: present
+    permanent: true
+    set_as_default: true
+  when: firewall_state == 'enabled'
+  notify: "firewalld_changed"
+
+- name: Allow specified ports in default zone
+  ansible.posix.firewalld:
+    zone: "{{ firewall_default_zone }}"
+    port: "{{ item }}"
+    state: enabled
+    permanent: true
+  loop: "{{ firewall_ports }}"
+  when: firewall_state == 'enabled' and firewall_ports | length > 0
+  notify: "firewalld_changed"
+
+- name: Allow specified services in default zone
+  ansible.posix.firewalld:
+    zone: "{{ firewall_default_zone }}"
+    service: "{{ item }}"
+    state: enabled
+    permanent: true
+  loop: "{{ firewall_services }}"
+  when: firewall_state == 'enabled' and firewall_services | length > 0
+  notify: "firewalld_changed"
+
+- name: Allow specified sources in default zone
+  ansible.posix.firewalld:
+    zone: "{{ firewall_default_zone }}"
+    source: "{{ item }}"
+    state: enabled
+    permanent: true
+  loop: "{{ firewall_sources }}"
+  when: firewall_state == 'enabled' and firewall_sources | length > 0
+  notify: "firewalld_changed"
+
+- name: Allow ICMP (ping) if enabled
+  ansible.posix.firewalld:
+    zone: "{{ firewall_default_zone }}"
+    rich_rule: 'rule family="ipv4" protocol="icmp" accept'
+    state: enabled
+    permanent: true
+  when: firewall_state == 'enabled' and firewall_allow_icmp
+  notify: "firewalld_changed"
+
+- name: Add port forwarding rules
+  ansible.posix.firewalld:
+    zone: "{{ firewall_default_zone }}"
+    forward: true
+    port: "{{ item.port }}"
+    to_port: "{{ item.to_port }}"
+    state: enabled
+    permanent: true
+  loop: "{{ firewall_forward_ports }}"
+  when: firewall_state == 'enabled' and firewall_forward_ports | length > 0
+  notify: "firewalld_changed"
+
+- name: Reload firewalld to apply permanent changes
+  ansible.builtin.command: firewall-cmd --reload
+  changed_when: true
+  listen: "firewalld_changed"
