@@ -34,7 +34,6 @@ PermitEmptyPasswords {{ ssh_permit_empty_passwords }}
 PasswordAuthentication no
 
 ChallengeResponseAuthentication {{ ssh_challenge_response_authentication }}
-#ChallengeResponseAuthentication no
 
 # Kerberos options
 #KerberosAuthentication no
@@ -74,3 +73,5 @@ UseDNS {{ ssh_use_dns }}
 
 ClientAliveInterval 300 # Keep alive every 5 minutes
 ClientAliveCountMax 2 # Disconnect after 2 missed intervals (10 minutes total inactivity)
+
+KbdInteractiveAuthentication no

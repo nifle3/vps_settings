@@ -1,0 +1,21 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for roles/start
+
+- name: Restart apt-daily.timer
+  ansible.builtin.systemd:
+    name: apt-daily.timer
+    state: restarted
+  listen: "Restart apt-daily.timer"
+
+- name: Restart dnf-automatic.timer
+  ansible.builtin.systemd:
+    name: dnf-automatic.timer
+    state: restarted
+  listen: "Restart dnf-automatic.timer"
+
+- name: Restart yum-cron
+  ansible.builtin.service:
+    name: yum-cron
+    state: restarted
+  listen: "Restart yum-cron"

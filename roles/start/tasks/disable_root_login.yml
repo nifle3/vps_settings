@@ -1,0 +1,14 @@
+- name: Отключить вход под root путем изменения shell
+  ansible.builtin.user:
+    name: root
+    shell: /sbin/nologin
+  # Проверяем, существует ли /sbin/nologin или /bin/false
+  # Это для максимальной кроссплатформенности, так как некоторые системы могут не иметь /sbin/nologin
+  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat" or ansible_os_family == "Suse"
+
+- name: Отключить вход под root путем изменения shell на /bin/false (альтернатива)
+  ansible.builtin.user:
+    name: root
+    shell: /bin/false
+  when: not (ansible_os_family == "Debian" or ansible_os_family == "RedHat" or ansible_os_family == "Suse")
+    and (ansible_facts['which']['false'] is defined and ansible_facts['which']['false'] != '')

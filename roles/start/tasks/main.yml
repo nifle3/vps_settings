@@ -1,0 +1,12 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/start
+
+- name: Включить обновление системы
+  ansible.builtin.include_tasks: update_system.yml
+
+- name: Отключить вход под root
+  ansible.builtin.include_tasks: disable_root_login.yml
+
+- name: Настроить еженедельные обновления
+  ansible.builtin.include_tasks: weekly_updates.yml

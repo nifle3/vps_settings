@@ -1,0 +1,17 @@
+- name: Обновить все пакеты (apt для Debian/Ubuntu)
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: dist
+  when: ansible_os_family == "Debian"
+
+- name: Обновить все пакеты (yum для RedHat/CentOS)
+  ansible.builtin.yum:
+    name: "*"
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: Обновить все пакеты (zypper для SLES/openSUSE)
+  community.general.zypper:
+    name: "*"
+    state: latest
+  when: ansible_os_family == "Suse"
