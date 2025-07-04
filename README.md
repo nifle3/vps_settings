@@ -1,3 +1,3 @@
-# Ansible Collection - vps_settings.ansible
-
-Documentation for the collection.
+# TODO:
+- сделать автоматический перезапуск ssh
+- сделать заблокирование всех остальных портов

@@ -5,18 +5,12 @@
 firewall_default_zone: public
 firewall_state: enabled
 
-firewall_ports:
-  - "22/tcp"
-  - "80/tcp"
-  - "443/tcp"
+firewall_ports: []
 
-firewall_services:
-  - "ssh"
-  - "http"
-  - "https"
+firewall_services: []
 
 firewall_sources: []
 
-firewall_allow_icmp: true
+firewall_allow_icmp: false
 
 firewall_forward_ports: []

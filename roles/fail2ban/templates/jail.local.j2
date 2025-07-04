@@ -20,62 +20,6 @@ logpath = %(sshd_log)s
 backend = %(sshd_backend)s
 action = {{ fail2ban_ssh_action }}
 
-# --- Apache Jails ---
-{% if fail2ban_apache_auth_enabled %}
-[apache-auth]
-enabled = true
-port = http,https
-logpath = %(apache_access_log)s
-action = %(action_mwl)s
-{% endif %}
-
-{% if fail2ban_apache_badbots_enabled %}
-[apache-badbots]
-enabled = true
-port = http,https
-logpath = %(apache_access_log)s
-maxretry = 2
-action = %(action_mwl)s
-{% endif %}
-
-{% if fail2ban_apache_dos_enabled %}
-[apache-dos]
-enabled = true
-port = http,https
-logpath = %(apache_access_log)s
-maxretry = 100
-findtime = 600
-action = %(action_mwl)s
-{% endif %}
-
-# --- Nginx Jails ---
-{% if fail2ban_nginx_http_auth_enabled %}
-[nginx-http-auth]
-enabled = true
-port = http,https
-logpath = %(nginx_access_log)s
-action = %(action_mwl)s
-{% endif %}
-
-{% if fail2ban_nginx_badbots_enabled %}
-[nginx-badbots]
-enabled = true
-port = http,https
-logpath = %(nginx_access_log)s
-maxretry = 2
-action = %(action_mwl)s
-{% endif %}
-
-{% if fail2ban_nginx_dos_enabled %}
-[nginx-dos]
-enabled = true
-port = http,https
-logpath = %(nginx_access_log)s
-maxretry = 100
-findtime = 600
-action = %(action_mwl)s
-{% endif %}
-
 # --- Recidive Jail ---
 [recidive]
 enabled = {{ fail2ban_recidive_enabled }}
@@ -84,16 +28,3 @@ findtime = {{ fail2ban_recidive_findtime }}
 maxretry = {{ fail2ban_recidive_maxretry }}
 logpath = /var/log/fail2ban.log
 action = {{ fail2ban_recidive_action }}
-
-# --- Дополнительные jails (раскомментируйте или добавьте по необходимости) ---
-# [postfix]
-# enabled = {{ fail2ban_postfix_enabled }}
-# port = smtp,ssmtp,submission,smtps
-# logpath = %(postfix_log)s
-# action = %(action_mwl)s
-
-# [dovecot]
-# enabled = {{ fail2ban_dovecot_enabled }}
-# port = pop3,pop3s,imap,imaps
-# logpath = %(dovecot_log)s
-# action = %(action_mwl)s

@@ -2,22 +2,30 @@
 ---
 # tasks file for roles/user
 
-
 - name: Определить имя sudo-группы на основе семейства ОС
   ansible.builtin.set_fact:
-    _add_user_sudo_group_name: "wheel"
+    add_user_sudo_group_name: "wheel"
   when: ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Archlinux"
+
+- name: Определить имя sudo-группы для Debian/Ubuntu
+  ansible.builtin.set_fact:
+    add_user_sudo_group_name: "sudo"
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Создать группу пользователя {{ add_user_name }}
+  ansible.builtin.group:
+    name: "{{ add_user_name }}"
+    state: present
+  when: add_user_state == "present"
 
 - name: Добавление пользователя {{ add_user_name }}
   ansible.builtin.user:
     name: "{{ add_user_name }}"
-    uid: "{{ add_user_uid | default(omit) }}"
-    group: "{{ add_user_gid | default(omit) }}"
+    group: "{{ add_user_name }}"
     groups: "{{ add_user_groups | join(',') if add_user_groups else omit }}"
     shell: "{{ add_user_shell }}"
     home: "{{ add_user_home }}"
     password: "{{ add_user_password | default(omit) }}"
-    ssh_key_file: "{{ add_user_home }}/.ssh/authorized_keys"
     state: "{{ add_user_state }}"
     system: "{{ add_user_system }}"
     comment: "{{ add_user_comment }}"
@@ -29,7 +37,7 @@
     user: "{{ add_user_name }}"
     key: "{{ add_user_ssh_key }}"
     state: present
-  when: add_user_state == "present" and add_user_ssh_key is defined and add_user_ssh_key | length > 0
+  when: add_user_state == "present" and add_user_ssh_key is defined
 
 - name: Установка прав доступа на домашнюю директорию
   ansible.builtin.file:
@@ -48,4 +56,8 @@
     mode: '0440'
     line: "{{ add_user_name }} {{ add_user_sudouser_rules }}"
     validate: '/usr/sbin/visudo -cf %s'
-  when: add_user_state == "present" and add_user_groups is defined and _add_user_sudo_group_name in add_user_groups
+  when:
+    - add_user_state == "present"
+    - add_user_groups is defined
+    - add_user_sudo_group_name is defined
+    - add_user_sudo_group_name in add_user_groups

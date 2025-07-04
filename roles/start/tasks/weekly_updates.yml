@@ -1,59 +1,57 @@
-- name: Установить unattended-upgrades (Debian/Ubuntu)
-  ansible.builtin.apt:
-    name: unattended-grades
-    state: present
-  when: ansible_os_family == "Debian"
-
-- name: Включить unattended-upgrades (Debian/Ubuntu)
-  ansible.builtin.dpkg_selections:
-    name: unattended-upgrades
-    selection: install
-  when: ansible_os_family == "Debian"
-
-- name: Настроить unattended-upgrades (Debian/Ubuntu)
-  ansible.builtin.lineinfile:
-    path: /etc/apt/apt.conf.d/50unattended-upgrades
-    regexp: '^//Unattended-Upgrade::Automatic-Reboot "false";'
-    line: 'Unattended-Upgrade::Automatic-Reboot "true";'
-    backup: yes
-  when: ansible_os_family == "Debian"
-  notify: Restart apt-daily.timer
-
-- name: Установить dnf-automatic (RedHat/CentOS 8+)
-  ansible.builtin.dnf:
-    name: dnf-automatic
-    state: present
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
-
-- name: Настроить dnf-automatic для ежедневного обновления (RedHat/CentOS 8+)
-  ansible.builtin.lineinfile:
-    path: /etc/dnf/automatic.conf
-    regexp: '^apply_updates = no'
-    line: 'apply_updates = yes'
-    backup: yes
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "8"
-  notify: Restart dnf-automatic.timer
-
-- name: Установить yum-cron (RedHat/CentOS 7-)
-  ansible.builtin.yum:
-    name: yum-cron
-    state: present
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
-
-- name: Настроить yum-cron для ежедневного обновления (RedHat/CentOS 7-)
-  ansible.builtin.lineinfile:
-    path: /etc/yum/yum-cron.conf
-    regexp: '^apply_updates = no'
-    line: 'apply_updates = yes'
-    backup: yes
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
-  notify: Restart yum-cron
-
-- name: Создать скрипт для еженедельного обновления (SLES/openSUSE)
+- name: Скопировать скрипт для еженедельного обновления (Debian/Ubuntu)
   ansible.builtin.copy:
-    content: |
-      #!/bin/bash
-      zypper update -y
+    src: weekly_apt_update.sh
+    dest: /usr/local/bin/weekly_apt_update.sh
+    mode: '0755'
+  when: ansible_os_family == "Debian"
+
+- name: Добавить cronjob для еженедельного обновления (Debian/Ubuntu)
+  ansible.builtin.cron:
+    name: "Еженедельное обновление системы"
+    weekday: "0"
+    hour: "3"
+    minute: "0"
+    job: "/usr/local/bin/weekly_apt_update.sh"
+  when: ansible_os_family == "Debian"
+
+# RedHat/CentOS 8+ - еженедельные обновления
+- name: Скопировать скрипт для еженедельного обновления (RedHat/CentOS 8+)
+  ansible.builtin.copy:
+    src: weekly_dnf_update.sh
+    dest: /usr/local/bin/weekly_dnf_update.sh
+    mode: '0755'
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 8
+
+- name: Добавить cronjob для еженедельного обновления (RedHat/CentOS 8+)
+  ansible.builtin.cron:
+    name: "Еженедельное обновление системы"
+    weekday: "0"
+    hour: "3"
+    minute: "0"
+    job: "/usr/local/bin/weekly_dnf_update.sh"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 8
+
+# RedHat/CentOS 7 - еженедельные обновления
+- name: Скопировать скрипт для еженедельного обновления (RedHat/CentOS 7)
+  ansible.builtin.copy:
+    src: weekly_yum_update.sh
+    dest: /usr/local/bin/weekly_yum_update.sh
+    mode: '0755'
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: Добавить cronjob для еженедельного обновления (RedHat/CentOS 7)
+  ansible.builtin.cron:
+    name: "Еженедельное обновление системы"
+    weekday: "0"
+    hour: "3"
+    minute: "0"
+    job: "/usr/local/bin/weekly_yum_update.sh"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+# SLES/openSUSE - еженедельные обновления
+- name: Скопировать скрипт для еженедельного обновления (SLES/openSUSE)
+  ansible.builtin.copy:
+    src: weekly_zypper_update.sh
     dest: /usr/local/bin/weekly_zypper_update.sh
     mode: '0755'
   when: ansible_os_family == "Suse"
@@ -61,8 +59,8 @@
 - name: Добавить cronjob для еженедельного обновления (SLES/openSUSE)
   ansible.builtin.cron:
     name: "Еженедельное обновление системы"
-    weekday: "0"  # Воскресенье
-    hour: "3"     # В 3 утра
+    weekday: "0"
+    hour: "3"
     minute: "0"
-    job: "/usr/local/bin/weekly_zypper_update.sh >> /var/log/weekly_zypper_update.log 2>&1"
+    job: "/usr/local/bin/weekly_zypper_update.sh"
   when: ansible_os_family == "Suse"
