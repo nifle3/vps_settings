@@ -1,3 +1,20 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/ssh
+
+- name: Установка openssh-server (если не установлен)
+  ansible.builtin.package:
+    name: openssh-server
+    state: present
+  tags: ssh_install
+
+- name: Настройка файла sshd_config
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: '0600'
+    validate: "/usr/sbin/sshd -t -f %s" # Валидация синтаксиса перед применением
+  notify: Перезапустить sshd
+  tags: ssh_config

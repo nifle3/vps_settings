@@ -1,0 +1,76 @@
+# templates/sshd_config.j2
+# This file is managed by Ansible. Do not edit manually.
+
+Port {{ ssh_port }}
+AddressFamily any
+ListenAddress 0.0.0.0
+#ListenAddress ::
+
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# Ciphers and MACs should be modern and secure. Adjust if needed for compatibility.
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
+MACs hmac-sha2-512,hmac-sha2-256
+KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256
+
+# Logging
+SyslogFacility AUTHPRIV
+LogLevel INFO
+
+# Authentication:
+LoginGraceTime 2m
+PermitRootLogin {{ ssh_permit_root_login }}
+StrictModes yes
+MaxAuthTries 6
+MaxSessions 5
+
+PubkeyAuthentication yes
+PasswordAuthentication {{ ssh_password_authentication }}
+PermitEmptyPasswords {{ ssh_permit_empty_passwords }}
+
+# To disable tunneled clear text passwords, change to no here!
+PasswordAuthentication no
+
+ChallengeResponseAuthentication {{ ssh_challenge_response_authentication }}
+#ChallengeResponseAuthentication no
+
+# Kerberos options
+#KerberosAuthentication no
+#KerberosOrLocalPasswd yes
+#KerberosTicketCleanup yes
+#KerberosGetAFSToken no
+
+# GSSAPI options
+#GSSAPIAuthentication no
+#GSSAPICleanupCredentials yes
+
+# Set this to 'yes' to enable PAM authentication,
+# The 'UsePAM no' option in sshd_config is deprecated and will be removed in a future release.
+# UsePAM no # Мы не трогаем PAM, поэтому оставляем его как есть или комментируем
+
+X11Forwarding yes
+X11DisplayOffset 10
+PrintMotd no
+PrintLastLog yes
+TCPKeepAlive yes
+#UseLogin no
+UsePrivilegeSeparation sandbox # Default for modern OpenSSH
+
+# No default banner path
+Banner none
+
+# Accept locale-related environment variables
+AcceptEnv LANG LC_*
+
+Subsystem sftp /usr/lib/openssh/sftp-server
+
+# Allow only specific users or groups (uncomment and configure as needed)
+# AllowUsers your_user_name
+# AllowGroups ssh_users
+
+UseDNS {{ ssh_use_dns }}
+
+ClientAliveInterval 300 # Keep alive every 5 minutes
+ClientAliveCountMax 2 # Disconnect after 2 missed intervals (10 minutes total inactivity)

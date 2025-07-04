@@ -1,7 +1,12 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/user
-#
+
+
+- name: Определить имя sudo-группы на основе семейства ОС
+  ansible.builtin.set_fact:
+    _add_user_sudo_group_name: "wheel"
+  when: ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Archlinux"
 
 - name: Добавление пользователя {{ add_user_name }}
   ansible.builtin.user:
@@ -25,3 +30,22 @@
     key: "{{ add_user_ssh_key }}"
     state: present
   when: add_user_state == "present" and add_user_ssh_key is defined and add_user_ssh_key | length > 0
+
+- name: Установка прав доступа на домашнюю директорию
+  ansible.builtin.file:
+    path: "{{ add_user_home }}"
+    owner: "{{ add_user_name }}"
+    group: "{{ add_user_name }}"
+    mode: '0700'
+    state: directory
+  when: add_user_state == "present"
+
+- name: Добавление пользователя {{ add_user_name }} в sudoers (если требуется)
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/{{ add_user_name }}
+    state: present
+    create: yes
+    mode: '0440'
+    line: "{{ add_user_name }} {{ add_user_sudouser_rules }}"
+    validate: '/usr/sbin/visudo -cf %s'
+  when: add_user_state == "present" and add_user_groups is defined and _add_user_sudo_group_name in add_user_groups

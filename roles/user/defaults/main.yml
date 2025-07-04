@@ -13,3 +13,7 @@ add_user_ssh_key: ""
 add_user_state: "present"
 add_user_system: "no"
 add_user_comment: "Created by Ansible"
+
+add_user_sudouser_rules: "ALL=(ALL): ALL"
+
+_add_user_sudo_group_name: "sudo"
