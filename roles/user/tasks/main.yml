@@ -1,0 +1,27 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/user
+#
+
+- name: Добавление пользователя {{ add_user_name }}
+  ansible.builtin.user:
+    name: "{{ add_user_name }}"
+    uid: "{{ add_user_uid | default(omit) }}"
+    group: "{{ add_user_gid | default(omit) }}"
+    groups: "{{ add_user_groups | join(',') if add_user_groups else omit }}"
+    shell: "{{ add_user_shell }}"
+    home: "{{ add_user_home }}"
+    password: "{{ add_user_password | default(omit) }}"
+    ssh_key_file: "{{ add_user_home }}/.ssh/authorized_keys"
+    state: "{{ add_user_state }}"
+    system: "{{ add_user_system }}"
+    comment: "{{ add_user_comment }}"
+    create_home: yes
+  when: add_user_state == "present"
+
+- name: Добавление SSH ключа для пользователя {{ add_user_name }}
+  ansible.builtin.authorized_key:
+    user: "{{ add_user_name }}"
+    key: "{{ add_user_ssh_key }}"
+    state: present
+  when: add_user_state == "present" and add_user_ssh_key is defined and add_user_ssh_key | length > 0

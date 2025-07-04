@@ -1,0 +1,15 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/user
+
+add_user_name: "newuser"
+add_user_uid: ""
+add_user_gid: ""
+add_user_groups: []
+add_user_shell: "/bin/bash"
+add_user_home: "/home/{{ add_user_name }}"
+add_user_password: ""
+add_user_ssh_key: ""
+add_user_state: "present"
+add_user_system: "no"
+add_user_comment: "Created by Ansible"
