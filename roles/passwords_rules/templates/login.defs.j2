@@ -1,0 +1,12 @@
+# This file configures the login.defs defaults for new user creation.
+# Managed by Ansible.
+
+# Min/max password limits
+PASS_MAX_DAYS   {{ password_policy_pass_max_days }}
+PASS_MIN_DAYS   {{ password_policy_pass_min_days }}
+PASS_WARN_AGE   {{ password_policy_pass_warn_age }}
+
+# Other settings (can be left as default or configured)
+ENCRYPT_METHOD YESCRYPT
+# Some other default login.defs content...
+# ... (keep existing content or use a more complete template)

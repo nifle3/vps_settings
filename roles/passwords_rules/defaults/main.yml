@@ -1,3 +1,27 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # defaults file for roles/passwords_rules
+
+# --- login.defs settings ---
+password_policy_pass_max_days: 90
+password_policy_pass_min_days: 7
+password_policy_pass_warn_age: 14
+
+# --- PAM pwquality settings ---
+password_policy_pwquality_minlen: 12
+password_policy_pwquality_minclass: 4
+password_policy_pwquality_dcredit: -1
+password_policy_pwquality_ucredit: -1
+password_policy_pwquality_lcredit: -1
+password_policy_pwquality_ocredit: -1
+password_policy_pwquality_retry: 3
+password_policy_pwquality_reject_username: true
+password_policy_pwquality_enforce_for_root: true
+
+# --- PAM remember (history) settings ---
+password_policy_remember_count: 5
+
+# --- PAM faillock settings (for common-auth and common-account) ---
+password_policy_faillock_deny: 5
+password_policy_faillock_unlock_time: 600 # seconds
+password_policy_faillock_audit: true

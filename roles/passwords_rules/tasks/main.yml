@@ -1,3 +1,51 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/passwords_rules
+
+- name: Install libpam-pwquality on Debian/Ubuntu
+  ansible.builtin.apt:
+    name: libpam-pwquality
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install pam_pwquality on RedHat/CentOS
+  ansible.builtin.yum:
+    name: pam_pwquality
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Configure /etc/login.defs
+  ansible.builtin.template:
+    src: login.defs.j2
+    dest: /etc/login.defs
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart sshd # Не всегда требуется для login.defs, но хорошая практика для сервисов, использующих аутентификацию
+
+- name: Configure /etc/pam.d/common-password
+  ansible.builtin.template:
+    src: common-password.j2
+    dest: /etc/pam.d/common-password
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart sshd
+
+- name: Configure /etc/pam.d/common-auth (for pam_faillock preauth/authfail)
+  ansible.builtin.template:
+    src: common-auth.j2
+    dest: /etc/pam.d/common-auth
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart sshd
+
+- name: Configure /etc/pam.d/common-account (for pam_faillock account)
+  ansible.builtin.template:
+    src: common-account.j2
+    dest: /etc/pam.d/common-account
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart sshd
