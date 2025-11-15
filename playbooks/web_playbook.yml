@@ -14,3 +14,7 @@
     - role: nginx
     - role: certbot
     - role: postgres
+    - role: postgres_db
+      postgres_db_name: "{{ postgres_db_name }}"
+      postgres_db_user: "{{ postgres_db_user }}"
+      postgres_db_password: "{{ posetgres_db_password }}"
