@@ -1,0 +1,24 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for postgres_db
+
+# Имя создаваемой базы данных
+postgres_db_name: mydb
+
+# Имя пользователя и его пароль
+postgres_db_user: myuser
+postgres_db_password: changeme
+
+# Хост для подключения (по умолчанию сокет)
+postgres_db_host: ""
+postgres_db_port: 5432
+
+# Расширения, которые нужно включить
+postgres_db_extensions: []
+
+# Параметры ALTER DATABASE SET ...
+postgres_db_parameters: {}
+# пример:
+# postgres_db_parameters:
+#   log_statement: "all"
+#   search_path: "public,extensions"

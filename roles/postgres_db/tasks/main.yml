@@ -1,0 +1,59 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for postgres_db
+
+---
+- name: Ensure PostgreSQL packages for Ansible are installed
+  ansible.builtin.package:
+    name: python3-psycopg2
+    state: present
+
+- name: Create database user
+  community.postgresql.postgresql_user:
+    name: "{{ postgres_db_user }}"
+    password: "{{ postgres_db_password }}"
+    port: "{{ postgres_db_port }}"
+    login_host: "{{ postgres_db_host }}"
+    role_attr_flags: "LOGIN"
+  become: true
+  become_user: postgres
+
+- name: Create database
+  community.postgresql.postgresql_db:
+    name: "{{ postgres_db_name }}"
+    owner: "{{ postgres_db_user }}"
+    encoding: UTF8
+    port: "{{ postgres_db_port }}"
+    login_host: "{{ postgres_db_host }}"
+  become: true
+  become_user: postgres
+
+- name: Enable database extensions
+  community.postgresql.postgresql_ext:
+    db: "{{ postgres_db_name }}"
+    name: "{{ item }}"
+    port: "{{ postgres_db_port }}"
+    login_host: "{{ postgres_db_host }}"
+  loop: "{{ postgres_db_extensions }}"
+  become: true
+  become_user: postgres
+
+- name: Apply ALTER DATABASE parameters
+  community.postgresql.postgresql_query:
+    db: "{{ postgres_db_name }}"
+    port: "{{ postgres_db_port }}"
+    login_host: "{{ postgres_db_host }}"
+    query: "ALTER DATABASE {{ postgres_db_name }} SET {{ item.key }} TO '{{ item.value }}';"
+  loop: "{{ postgres_db_parameters | dict2items }}"
+  become: true
+  become_user: postgres
+
+- name: Apply extra SQL if provided
+  community.postgresql.postgresql_query:
+    db: "{{ postgres_db_name }}"
+    port: "{{ postgres_db_port }}"
+    login_host: "{{ postgres_db_host }}"
+    query: "{{ postgres_db_extra_sql }}"
+  when: postgres_db_extra_sql | length > 0
+  become: true
+  become_user: postgres
