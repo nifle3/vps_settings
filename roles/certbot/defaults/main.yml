@@ -1,0 +1,9 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for certbot
+
+certbot_package: certbot
+certbot_nginx_plugin_package: python3-certbot-nginx
+
+# Если не нужен плагин для nginx — поставь false
+certbot_install_nginx_plugin: true

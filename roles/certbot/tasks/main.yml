@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for certbot
+
+- name: Install Certbot
+  ansible.builtin.package:
+    name: "{{ certbot_package }}"
+    state: present
+
+- name: Install Certbot nginx plugin
+  ansible.builtin.package:
+    name: "{{ certbot_nginx_plugin_package }}"
+    state: present
+  when: certbot_install_nginx_plugin
