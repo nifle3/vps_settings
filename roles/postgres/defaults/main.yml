@@ -1,3 +1,15 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # defaults file for install_postgres
+#
+postgresql_version: 18
+postgresql_service_name: "postgresql"
+
+# Путь к конфигам может различаться в зависимости от дистрибутива
+postgresql_conf_dir: "/etc/postgresql/{{ postgresql_version }}/main"
+
+# Настройки по умолчанию
+postgresql_listen_address: "localhost"
+postgresql_port: 5432
+
+postgresql_manage_configs: true

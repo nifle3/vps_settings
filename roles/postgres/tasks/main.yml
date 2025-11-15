@@ -1,3 +1,48 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for install_postgres
+
+- name: Add PostgreSQL APT repository (Debian/Ubuntu)
+  ansible.builtin.apt_key:
+    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add PostgreSQL repo to apt sources list
+  ansible.builtin.apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+    state: present
+    filename: "pgdg"
+  when: ansible_os_family == "Debian"
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install PostgreSQL {{ postgresql_version }}
+  ansible.builtin.package:
+    name: "postgresql-{{ postgresql_version }}"
+    state: present
+
+- name: Ensure PostgreSQL is enabled and started
+  ansible.builtin.service:
+    name: "{{ postgresql_service_name }}"
+    state: started
+    enabled: true
+
+- name: Deploy postgresql.conf
+  ansible.builtin.template:
+    src: postgresql.conf.j2
+    dest: "{{ postgresql_conf_dir }}/postgresql.conf"
+    mode: "0644"
+  when: postgresql_manage_configs
+  notify: restart postgresql
+
+- name: Deploy pg_hba.conf
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
+    mode: "0640"
+  when: postgresql_manage_configs
+  notify: restart postgresql

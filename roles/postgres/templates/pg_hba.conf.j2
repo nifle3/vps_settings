@@ -1,0 +1,10 @@
+# pg_hba.conf — безопасность подключения
+
+# Local подключения (Unix socket)
+local   all             all                                     peer
+
+# IPv4 подключения
+host    all             all             127.0.0.1/32            scram-sha-256
+
+# IPv6 подключения
+host    all             all             ::1/128                 scram-sha-256
