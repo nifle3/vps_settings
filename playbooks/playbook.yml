@@ -1,7 +1,7 @@
 - name: Setup server for me
   hosts: webservers
   vars_files:
-    - vars.yml
+    - ../vars.yml
   become: true
   roles:
     - role: start
