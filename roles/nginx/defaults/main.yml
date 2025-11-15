@@ -1,0 +1,7 @@
+#SPDX-License-Identifier: MIT-0
+---
+nginx_package_name: nginx
+nginx_service_name: nginx
+nginx_user: www-data
+nginx_worker_processes: auto
+nginx_worker_connections: 4096

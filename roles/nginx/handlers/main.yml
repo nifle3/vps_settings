@@ -1,0 +1,8 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for install_nginx
+
+- name: restart nginx
+  ansible.builtin.service:
+    name: "{{ nginx_service_name }}"
+    state: restarted

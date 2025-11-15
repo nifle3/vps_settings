@@ -1,0 +1,20 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for install_nginx
+- name: Install nginx
+  ansible.builtin.package:
+    name: "{{ nginx_package_name }}"
+    state: present
+
+- name: Ensure nginx is enabled and started
+  ansible.builtin.service:
+    name: "{{ nginx_service_name }}"
+    state: started
+    enabled: true
+
+- name: Deploy base nginx.conf
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+  notify: restart nginx
