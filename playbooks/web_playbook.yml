@@ -6,10 +6,9 @@
   roles:
     - role: start
     - role: passwords_rules
-    - role: ssh
-      ssh_port: "{{ custom_ssh_port }}"
     - role:  firewall
       firewall_ports: "{{ access_port }}"
+      firewall_allow_icmp: true
     - role: fail2ban
     - role: nginx
     - role: certbot
@@ -17,4 +16,6 @@
     - role: postgres_db
       postgres_db_name: "{{ postgres_db_name }}"
       postgres_db_user: "{{ postgres_db_user }}"
-      postgres_db_password: "{{ posetgres_db_password }}"
+      postgres_db_password: "{{ postgres_db_password }}"
+    - role: ssh
+      ssh_port: "{{ custom_ssh_port }}"
