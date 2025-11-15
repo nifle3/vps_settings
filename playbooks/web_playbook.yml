@@ -6,9 +6,6 @@
   roles:
     - role: start
     - role: passwords_rules
-    - role:  firewall
-      firewall_ports: "{{ access_port }}"
-      firewall_allow_icmp: true
     - role: fail2ban
     - role: nginx
     - role: certbot
