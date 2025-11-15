@@ -1,0 +1,20 @@
+- name: Setup server for me
+  hosts: webservers
+  vars_files:
+    - vars.yml
+  become: true
+  roles:
+    - role: start
+    - role: passwords_rules
+    - role: user
+      add_user_name: "{{ user_name }}"
+      add_user_password: "{{ user_password | password_hash('sha512') }}"
+      add_user_sudouser_rules: "ALL=(ALL) NOPASSWD: ALL"
+      add_user_ssh_key: "{{ ssh_key_user }}"
+    - role: ssh
+      ssh_port: "{{ custom_ssh_port }}"
+    - role:  firewall
+      firewall_ports: "{{ access_port }}"
+    - role: fail2ban
+    - role: docker
+      docker_users: "{{ custom_docker_users }}"

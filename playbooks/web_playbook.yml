@@ -1,0 +1,16 @@
+- name: Setup server for me
+  hosts: webservers
+  vars_files:
+    - vars.yml
+  become: true
+  roles:
+    - role: start
+    - role: passwords_rules
+    - role: ssh
+      ssh_port: "{{ custom_ssh_port }}"
+    - role:  firewall
+      firewall_ports: "{{ access_port }}"
+    - role: fail2ban
+    - role: nginx
+    - role: certbot
+    - role: postgres
