@@ -1,21 +1,41 @@
-# PostgreSQL configuration
-
 listen_addresses = '{{ postgresql_listen_address }}'
 port = {{ postgresql_port }}
 
-# Настройки производительности
-max_connections = 100
-shared_buffers = 128MB
-dynamic_shared_memory_type = posix
+# Security
+password_encryption = scram-sha-256
 
-# Новые возможности PostgreSQL 18: asynchr. I/O
-# Можно задать io_method, например io_uring или worker
-# По умолчанию будет синхронный подход, если не переопределено
-# io_method = 'worker'
-# effective_io_concurrency = 2
+# Memory
+shared_buffers = {{ (ansible_memtotal_mb * 0.25) | int }}MB
+effective_cache_size = {{ (ansible_memtotal_mb * 0.70) | int }}MB
+work_mem = {{ (ansible_memtotal_mb * 0.015) | int }}MB       # на запрос
+maintenance_work_mem = {{ (ansible_memtotal_mb * 0.10) | int }}MB
 
+# Parallel & workers
+max_worker_processes = 8
+max_parallel_workers = 8
+max_parallel_workers_per_gather = 4
+
+# WAL
+wal_level = replica
+wal_compression = on
+max_wal_size = 4GB
+min_wal_size = 1GB
+checkpoint_timeout = 15min
+checkpoint_completion_target = 0.9
+
+# Logging
 log_timezone = 'UTC'
 timezone = 'UTC'
+log_statement = 'none'
+log_connections = on
+log_disconnections = on
+log_min_duration_statement = 500ms
 
-# Включаем дополнительные конфиги
+# Backend
+max_connections = 200
+
+# PostgreSQL 18 I/O tuning
+io_method = 'io_uring'
+effective_io_concurrency = 256
+
 include_dir = 'conf.d'
