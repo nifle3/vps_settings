@@ -1,2 +1,2 @@
-[all]
+[webservers]
 ip ansible_username ansible_user
