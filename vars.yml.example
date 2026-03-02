@@ -1,0 +1,8 @@
+user_name:
+user_password: ""
+ssh_key_user: 
+custom_ssh_port: 22
+access_port: 
+  - "22/tcp"
+  - "22/udp"
+custom_docker_user: 

@@ -1,6 +1,6 @@
 # How to start
 ```
-nix develop -c ansible-playbook -i ./inventory.ini playbook.yml --ask-become-pass
+nix develop -c ansible-playbook -i ./inventory.ini playbook.yml --ask-become-pass playbooks/playbook.yml
 ```
 
 # TODO:
