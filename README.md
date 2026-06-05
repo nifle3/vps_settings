@@ -1,3 +1,6 @@
+# Title
+- []
+
 # How to start
 ## If you have nix package manager
 ```
@@ -15,9 +18,3 @@ pip install -r requirements.txt
 # Start 
 ansible-playbook -i ./inventory.ini ./playbooks/playbook.yml --ask-become-pass
 ```
-
-# TODO:
-- сделать автоматический перезапуск ssh
-- сделать заблокирование всех остальных портов
-- сделать через плейбук изначального пользователя
-- сделать тоже самое на nix
