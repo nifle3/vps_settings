@@ -1,1 +1,12 @@
 docker_users: []
+docker_repo_os: "{{ 'ubuntu' if ansible_distribution == 'Ubuntu' else 'debian' }}"
+docker_repo_arch: >-
+  {{
+    'amd64'
+    if ansible_architecture in ['x86_64', 'amd64']
+    else 'arm64'
+    if ansible_architecture in ['aarch64', 'arm64']
+    else 'armhf'
+    if ansible_architecture == 'armv7l'
+    else ansible_architecture
+  }}

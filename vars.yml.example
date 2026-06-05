@@ -5,4 +5,4 @@ custom_ssh_port: 22
 access_port: 
   - "22/tcp"
   - "22/udp"
-custom_docker_user: 
+custom_docker_users: []

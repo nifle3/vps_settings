@@ -4,7 +4,8 @@
 # How to start
 ## If you have nix package manager
 ```
-nix develop -c ansible-playbook -i ./inventory.ini playbook.yml --ask-become-pass
+nix develop -c ansible-galaxy collection install -r requirements.yml
+nix develop -c ansible-playbook -i ./inventory.ini ./playbooks/playbook.yml --ask-become-pass
 ```
 
 ## If you have no nix package manager
@@ -15,6 +16,8 @@ python3 -m venv ./.venv
 fish ./.venv/bin/activate.fish # or something else
 # Install deps
 pip install -r requirements.txt
+# Install Ansible collections
+ansible-galaxy collection install -r requirements.yml
 # Start 
 ansible-playbook -i ./inventory.ini ./playbooks/playbook.yml --ask-become-pass
 ```

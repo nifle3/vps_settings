@@ -30,11 +30,6 @@ PubkeyAuthentication yes
 PasswordAuthentication {{ ssh_password_authentication }}
 PermitEmptyPasswords {{ ssh_permit_empty_passwords }}
 
-# To disable tunneled clear text passwords, change to no here!
-PasswordAuthentication no
-
-ChallengeResponseAuthentication {{ ssh_challenge_response_authentication }}
-
 # Kerberos options
 #KerberosAuthentication no
 #KerberosOrLocalPasswd yes
@@ -55,7 +50,6 @@ PrintMotd no
 PrintLastLog yes
 TCPKeepAlive yes
 #UseLogin no
-UsePrivilegeSeparation sandbox # Default for modern OpenSSH
 
 # No default banner path
 Banner none
@@ -71,7 +65,7 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 
 UseDNS {{ ssh_use_dns }}
 
-ClientAliveInterval 300 # Keep alive every 5 minutes
-ClientAliveCountMax 2 # Disconnect after 2 missed intervals (10 minutes total inactivity)
+ClientAliveInterval 300
+ClientAliveCountMax 2
 
-KbdInteractiveAuthentication no
+KbdInteractiveAuthentication {{ ssh_challenge_response_authentication }}

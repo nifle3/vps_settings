@@ -2,19 +2,19 @@
 ---
 # tasks file for roles/ssh
 
-- name: Установка openssh-server (если не установлен)
+- name: Install OpenSSH server
   ansible.builtin.package:
     name: openssh-server
     state: present
   tags: ssh_install
 
-- name: Настройка файла sshd_config
+- name: Configure sshd
   ansible.builtin.template:
     src: sshd_config.j2
     dest: /etc/ssh/sshd_config
     owner: root
     group: root
     mode: '0600'
-    validate: "/usr/sbin/sshd -t -f %s" # Валидация синтаксиса перед применением
-  notify: Перезапустить sshd
+    validate: "/usr/sbin/sshd -t -f %s"
+  notify: Restart sshd
   tags: ssh_config

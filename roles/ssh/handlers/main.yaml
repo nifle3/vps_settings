@@ -2,7 +2,7 @@
 ---
 # handlers file for roles/ssh
 
-- name: Перезапустить sshd
+- name: Restart sshd
   ansible.builtin.service:
-    name: sshd
+    name: "{{ ssh_service_name }}"
     state: restarted
