@@ -13,7 +13,7 @@ nix develop -c ansible-playbook -i ./inventory.ini ./playbooks/playbook.yml --as
 # first step create a venv
 python3 -m venv ./.venv
 # Second step activate venv
-fish ./.venv/bin/activate.fish # or something else
+source ./.venv/bin/activate.fish # or something else
 # Install deps
 pip install -r requirements.txt
 # Install Ansible collections
