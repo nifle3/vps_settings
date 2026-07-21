@@ -59,5 +59,6 @@
   when:
     - add_user_state == "present"
     - add_user_groups is defined
+    - add_user_sudouser_rules is defined
     - add_user_sudo_group_name is defined
     - add_user_sudo_group_name in add_user_groups
